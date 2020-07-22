@@ -29,27 +29,27 @@ class LogInterceptor : Interceptor {
         // request 基本信息
         result.append("net debug log")
                 .append("\n========= Request =========")
-                .append("\nmethod: ").append(request.method)
-                .append("\nurl: ").append(request.url.toString())
+                .append("\nmethod: ").append(request.method())
+                .append("\nurl: ").append(request.url().toString())
 
         // request headers
-        var headers = request.headers
+        var headers = request.headers()
         result.append("\nheaders {\n")
 
-        for (i in 0 until headers.size) {
+        for (i in 0 until headers.size()) {
             result.append("\t").append(headers.name(i)).append(": ").append(headers.value(i)).append("\n")
 
         }
         result.append("}")
 
         // request post body
-        if (TextUtils.equals("POST", request.method)) {
+        if (TextUtils.equals("POST", request.method())) {
             result.append("\nbody ")
             try {
                 val copy = request.newBuilder().build()
                 val buffer = Buffer()
-                if(copy.body!!.contentLength()<10000){
-                    copy.body!!.writeTo(buffer)
+                if(copy.body()!!.contentLength()<10000){
+                    copy.body()!!.writeTo(buffer)
                     result.append(buffer.readUtf8())
                 }
 
@@ -63,15 +63,15 @@ class LogInterceptor : Interceptor {
         result.append("\n========= Response =========")
 
         result.append("\nheaders {\n")
-        headers = response.headers
-        for (i in 0 until response.headers.size) {
+        headers = response.headers()
+        for (i in 0 until response.headers().size()) {
             result.append("\t").append(headers.name(i)).append(": ").append(headers.value(i)).append("\n")
 
         }
         result.append("}")
 
-        result.append("\ncode: ").append(response.code)
-                .append("\nmessage: ").append(response.message)
+        result.append("\ncode: ").append(response.code())
+                .append("\nmessage: ").append(response.message())
                 .append("\njson: ").append(peekBody.string())
 
         // 时间

@@ -23,7 +23,7 @@ class APIWrapper {
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-                    val code = response.code
+                    val code = response.code()
                     if(code == 200){
                         callback?.onNext(null)
                     }
