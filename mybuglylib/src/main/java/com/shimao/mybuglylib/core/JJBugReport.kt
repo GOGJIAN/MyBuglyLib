@@ -50,14 +50,16 @@ class JJBugReport private constructor() {
 
     fun init(context: Context?){
         if (context == null) throw NullPointerException("Context can not be null!")
+        if (!Util.isMainProcess(context)){
+            return
+        }
         if(sBaseUrl.isEmpty()) throw IllegalArgumentException("base url can not be empty!")
         sContext = if (context !is Application) context.applicationContext else context
+
         sApplication = sContext!!.packageManager.getApplicationLabel((sContext as Application).applicationInfo).toString()
         sIsDebug = sContext!!.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
         PublicParams.retrievePublicInfo(sContext!!)
-        if (!Util.isMainProcess(context)){
-            throw IllegalStateException("Must init at MainProcess!")
-        }
+
         JJBugHandler.newInstance(Thread.getDefaultUncaughtExceptionHandler()).setCallback(sCallback).register()
         registerRecoveryLifecycleCallback()
         CrashDatabase.init(context)
