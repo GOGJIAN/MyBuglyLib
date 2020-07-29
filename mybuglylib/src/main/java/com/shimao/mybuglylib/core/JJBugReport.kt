@@ -3,8 +3,8 @@ package com.shimao.mybuglylib.core
 import android.app.Application
 import android.content.Context
 import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
 import android.util.Log
+import com.shimao.mybuglylib.data.HttpClient
 import com.shimao.mybuglylib.data.ICallBack
 import com.shimao.mybuglylib.data.db.CrashDatabase
 import com.shimao.mybuglylib.data.model.ActivityEvent
@@ -61,9 +61,10 @@ class JJBugReport private constructor() {
         PublicParams.retrievePublicInfo(sContext!!)
 
         JJBugHandler.newInstance(Thread.getDefaultUncaughtExceptionHandler()).setCallback(sCallback).register()
-        registerRecoveryLifecycleCallback()
+        registerActivityLifecycleCallback()
         CrashDatabase.init(context)
         ClickIntercept.init()
+        HttpClient.getHttpClient((sContext as Application).applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0)
         Thread(Runnable {
             CrashDatabase.get().crashDao().deleteAlreadyPost()
             val list = CrashDatabase.get().crashDao().getAllUnPostData()
@@ -94,7 +95,7 @@ class JJBugReport private constructor() {
 
     }
 
-    private fun registerRecoveryLifecycleCallback() {
+    private fun registerActivityLifecycleCallback() {
         (sContext as Application).registerActivityLifecycleCallbacks(JJBugActivityLifecycleCallBack())
     }
 
