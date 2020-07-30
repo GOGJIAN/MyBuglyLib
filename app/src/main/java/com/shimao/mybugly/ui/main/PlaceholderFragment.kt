@@ -45,7 +45,7 @@ class PlaceholderFragment : Fragment() {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            JJBugReport.getInstance().sFragmentList.add(
+            JJBugReport.getInstance().addFragmentRecord(
                 FragmentEvent(
                     System.currentTimeMillis(), this::class.java.name+"_"+parentFragmentManager.fragments.indexOf(this), "show"
                 )
@@ -56,7 +56,7 @@ class PlaceholderFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if(isVisible) {
-            JJBugReport.getInstance().sFragmentList.add(
+            JJBugReport.getInstance().addFragmentRecord(
                 FragmentEvent(
                     System.currentTimeMillis(), this::class.java.name+"_"+parentFragmentManager.fragments.indexOf(this), "show"
                 )
@@ -67,7 +67,7 @@ class PlaceholderFragment : Fragment() {
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (isVisibleToUser) {
-            JJBugReport.getInstance().sFragmentList.add(
+            JJBugReport.getInstance().addFragmentRecord(
                 FragmentEvent(
                     System.currentTimeMillis(), this::class.java.name+"_"+parentFragmentManager.fragments.indexOf(this), "show"
                 )

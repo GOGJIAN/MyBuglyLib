@@ -24,9 +24,9 @@ class JJBugHandler private constructor(defHandler: Thread.UncaughtExceptionHandl
     @Synchronized
     override fun uncaughtException(t: Thread, error: Throwable) {
         val stack = BIUtil.exception(error)
-        val activitys = Gson().toJson(JJBugReport.getInstance().sActivityList)
-        val fragments = Gson().toJson(JJBugReport.getInstance().sFragmentList)
-        val clicks = Gson().toJson(JJBugReport.getInstance().sClickList)
+        val activitys = JJBugReport.getInstance().getActivityString()
+        val fragments = JJBugReport.getInstance().getFragmentString()
+        val clicks = JJBugReport.getInstance().getClickString()
         val id = UUID.randomUUID().toString()
         CrashDatabase.get().crashDao().insert(
             CrashVO(

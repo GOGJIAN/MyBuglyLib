@@ -26,7 +26,7 @@ class JJBugActivityLifecycleCallBack : ActivityLifecycleCallbacks {
         }
 
 
-        JJBugReport.getInstance().sActivityList.add(
+        JJBugReport.getInstance().addActivityRecord(
             ActivityEvent(
                 System.currentTimeMillis(),
                 activity::class.java.name,
@@ -36,7 +36,7 @@ class JJBugActivityLifecycleCallBack : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityStarted(activity: Activity) {
-        JJBugReport.getInstance().sActivityList.add(
+        JJBugReport.getInstance().addActivityRecord(
             ActivityEvent(
                 System.currentTimeMillis(),
                 activity::class.java.name,
@@ -47,7 +47,7 @@ class JJBugActivityLifecycleCallBack : ActivityLifecycleCallbacks {
 
     override fun onActivityResumed(activity: Activity) {
 
-        JJBugReport.getInstance().sActivityList.add(
+        JJBugReport.getInstance().addActivityRecord(
             ActivityEvent(
                 System.currentTimeMillis(),
                 activity::class.java.name,
@@ -57,7 +57,7 @@ class JJBugActivityLifecycleCallBack : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityPaused(activity: Activity) {
-        JJBugReport.getInstance().sActivityList.add(
+        JJBugReport.getInstance().addActivityRecord(
             ActivityEvent(
                 System.currentTimeMillis(),
                 activity::class.java.name,
@@ -67,7 +67,7 @@ class JJBugActivityLifecycleCallBack : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityStopped(activity: Activity) {
-        JJBugReport.getInstance().sActivityList.add(
+        JJBugReport.getInstance().addActivityRecord(
             ActivityEvent(
                 System.currentTimeMillis(),
                 activity::class.java.name,
@@ -77,7 +77,7 @@ class JJBugActivityLifecycleCallBack : ActivityLifecycleCallbacks {
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-        JJBugReport.getInstance().sActivityList.add(
+        JJBugReport.getInstance().addActivityRecord(
             ActivityEvent(
                 System.currentTimeMillis(),
                 activity::class.java.name,
@@ -87,7 +87,7 @@ class JJBugActivityLifecycleCallBack : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        JJBugReport.getInstance().sActivityList.add(
+        JJBugReport.getInstance().addActivityRecord(
             ActivityEvent(
                 System.currentTimeMillis(),
                 activity::class.java.name,

@@ -126,7 +126,7 @@ object ClickIntercept {
                                 }catch (e:Resources.NotFoundException){
                                     "null"
                                 }
-                                JJBugReport.getInstance().sClickList.add(ClickEvent(System.currentTimeMillis(),v.context::class.java.name,id))
+                                JJBugReport.getInstance().addClickEvent(ClickEvent(System.currentTimeMillis(),v.context::class.java.name,id))
                                 return false
                             }
                         })

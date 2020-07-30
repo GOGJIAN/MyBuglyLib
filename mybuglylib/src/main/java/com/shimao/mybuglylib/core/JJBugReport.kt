@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.util.Log
+import com.google.gson.Gson
 import com.shimao.mybuglylib.data.HttpClient
 import com.shimao.mybuglylib.data.ICallBack
 import com.shimao.mybuglylib.data.db.CrashDatabase
@@ -36,17 +37,51 @@ class JJBugReport private constructor() {
         }
 
     }
-    var sActivityList = mutableListOf<ActivityEvent>()
-    var sFragmentList = mutableListOf<FragmentEvent>()
-    var sClickList = mutableListOf<ClickEvent>()
+    private var sActivityList = mutableListOf<ActivityEvent>()
+    private var sFragmentList = mutableListOf<FragmentEvent>()
+    private var sClickList = mutableListOf<ClickEvent>()
+    private var sUserMap = mutableMapOf<String,String>()
     var sBaseUrl:String = ""
+        private set
     var sUA:String? = null
+        private set
     var sIsDebug:Boolean = false
+        private set
     var sContext:Context? = null
+        private set
     lateinit var sApplication:String
+        private set
 
     private var sCallback: JJBugCallBack? = null
     var sDelay: Long = 250
+
+    fun addUserMapInfo(k:String,v:String){
+        sUserMap[k] = v
+    }
+
+    fun addActivityRecord(activityEvent: ActivityEvent){
+        sActivityList.add(activityEvent)
+    }
+
+    fun addFragmentRecord(fragmentEvent: FragmentEvent){
+        sFragmentList.add(fragmentEvent)
+    }
+
+    fun addClickEvent(clickEvent: ClickEvent){
+        sClickList.add(clickEvent)
+    }
+
+    fun getActivityString():String{
+        return Gson().toJson(sActivityList)
+    }
+
+    fun getFragmentString():String{
+        return Gson().toJson(sFragmentList)
+    }
+
+    fun getClickString():String{
+        return Gson().toJson(sClickList)
+    }
 
     fun init(context: Context?){
         if (context == null) throw NullPointerException("Context can not be null!")
