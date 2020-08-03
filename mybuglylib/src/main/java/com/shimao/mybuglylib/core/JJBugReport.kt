@@ -52,6 +52,9 @@ class JJBugReport private constructor() {
     lateinit var sApplication:String
         private set
 
+    var sPacketName:String = "com.shimao"
+        private set
+
     private var sCallback: JJBugCallBack? = null
     var sDelay: Long = 250
 
@@ -96,9 +99,7 @@ class JJBugReport private constructor() {
         PublicParams.retrievePublicInfo(sContext!!)
 
         JJBugHandler.newInstance(Thread.getDefaultUncaughtExceptionHandler()).setCallback(sCallback).register()
-        registerActivityLifecycleCallback()
         CrashDatabase.init(context)
-        ClickIntercept.init()
         HttpClient.getHttpClient((sContext as Application).applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0)
         Thread(Runnable {
             CrashDatabase.get().crashDao().deleteAlreadyPost()
@@ -128,10 +129,6 @@ class JJBugReport private constructor() {
             }
         }).start()
 
-    }
-
-    private fun registerActivityLifecycleCallback() {
-        (sContext as Application).registerActivityLifecycleCallbacks(JJBugActivityLifecycleCallBack())
     }
 
     fun callback(callback: JJBugCallBack?): JJBugReport {
