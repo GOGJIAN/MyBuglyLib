@@ -59,7 +59,7 @@ class LogInterceptor : Interceptor {
         }
 
         // response 基本信息
-        val peekBody = response.peekBody(1024)
+        val peekBody = response.peekBody(Long.MAX_VALUE)
         result.append("\n========= Response =========")
 
         result.append("\nheaders {\n")

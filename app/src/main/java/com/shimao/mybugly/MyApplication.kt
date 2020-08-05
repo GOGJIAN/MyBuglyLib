@@ -15,7 +15,8 @@ class MyApplication: Application() {
             .getInstance()
             .baseUrl("https://m.lehe.com/api/jarvis/record/logger")
             .applicationName("demo")
-            .delay(2500)
+            .packetName("com.shimao.mybugly")
+            .delay(250)
             .init(this)
     }
 }

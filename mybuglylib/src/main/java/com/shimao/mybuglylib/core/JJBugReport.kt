@@ -52,7 +52,7 @@ class JJBugReport private constructor() {
     lateinit var sApplication:String
         private set
 
-    var sPacketName:String = "com.shimao"
+    var sSonPacketName:String = "com.shimao"
         private set
 
     private var sCallback: JJBugCallBack? = null
@@ -97,7 +97,7 @@ class JJBugReport private constructor() {
         sApplication = sContext!!.packageManager.getApplicationLabel((sContext as Application).applicationInfo).toString()
         sIsDebug = sContext!!.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
         PublicParams.retrievePublicInfo(sContext!!)
-
+        registerActivityLifecycleCallback()
         JJBugHandler.newInstance(Thread.getDefaultUncaughtExceptionHandler()).setCallback(sCallback).register()
         CrashDatabase.init(context)
         HttpClient.getHttpClient((sContext as Application).applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0)
@@ -131,8 +131,17 @@ class JJBugReport private constructor() {
 
     }
 
+    private fun registerActivityLifecycleCallback() {
+        (sContext as Application).registerActivityLifecycleCallbacks(JJBugActivityLifecycleCallBack())
+    }
+
     fun callback(callback: JJBugCallBack?): JJBugReport {
         sCallback = callback
+        return this
+    }
+
+    fun packetName(son:String): JJBugReport{
+        sSonPacketName = son
         return this
     }
 

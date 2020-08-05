@@ -42,20 +42,6 @@ class PlaceholderFragment : Fragment() {
         return root
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-    }
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-    }
-
     companion object {
         /**
          * The fragment argument representing the section number for this

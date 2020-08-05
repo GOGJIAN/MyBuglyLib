@@ -22,32 +22,35 @@ import org.aspectj.lang.annotation.Before
 class AspectHelper {
     private val TAG = this.javaClass.simpleName
 
-    private val activityList = mutableListOf("onCreate","onResume","onPause","onDestroy")
-    @After("execution(* android.app.Activity.on**(..))")
-    fun onActivityRecord(joinPoint: JoinPoint) {
-        val key = joinPoint.signature.toString()
-        if(!key.contains(JJBugReport.getInstance().sPacketName)){
-            return
-        }
-        var count = 0
-        for (str in activityList){
-            if(joinPoint.signature.name == str){
-                count++
-            }
-        }
-        if(count == 0){
-            return
-        }
-        JJBugReport.getInstance().addActivityRecord(
-            ActivityEvent(System.currentTimeMillis(),joinPoint.getThis().javaClass.simpleName,joinPoint.signature.name)
-        )
-    }
+//    private val activityList = mutableListOf("onCreate","onResume","onPause","onDestroy")
+//    @After("execution(* android.app.Activity.on**(..))")
+//    fun onActivityRecord(joinPoint: JoinPoint) {
+//        val key = joinPoint.signature.toString()
+//        val clazz = joinPoint.getThis()::class.java.name
+//        if(!(clazz.startsWith(JJBugReport.getInstance().sSonPacketName)
+//                    &&(key.contains("androidx.fragment.app.FragmentActivity")))){
+//            return
+//        }
+//        var count = 0
+//        for (str in activityList){
+//            if(joinPoint.signature.name == str){
+//                count++
+//            }
+//        }
+//        if(count == 0){
+//            return
+//        }
+//        JJBugReport.getInstance().addActivityRecord(
+//            ActivityEvent(System.currentTimeMillis(),clazz,joinPoint.signature.name)
+//        )
+//    }
 
     private val fragmentList = mutableListOf("onResume","onPause","onHiddenChanged")
     @Before("execution(* androidx.fragment.app.Fragment.on**(..))")
     fun onFragmentRecord(joinPoint: JoinPoint){
         val key = joinPoint.signature.toString()
-        if(!key.contains(JJBugReport.getInstance().sPacketName)){
+        val clazz = joinPoint.getThis()::class.java.name
+        if(!(clazz.startsWith(JJBugReport.getInstance().sSonPacketName)&&key.contains("androidx.fragment.app.Fragment"))){
             return
         }
         var count = 0
@@ -61,7 +64,7 @@ class AspectHelper {
         }
 
         val status = if(joinPoint.signature.name == "onHiddenChanged"&&joinPoint.args.isNotEmpty() && joinPoint.args[0] is Boolean){
-            joinPoint.args[0] as String
+            "_"+joinPoint.args[0] as String
         }else ""
 
         val fragment = joinPoint.getThis() as Fragment
@@ -69,14 +72,15 @@ class AspectHelper {
         if(index==-1)
             return
         JJBugReport.getInstance().addFragmentRecord(
-            FragmentEvent(System.currentTimeMillis(),joinPoint.getThis().javaClass.simpleName+"_"+index,joinPoint.signature.name+" "+status+"_"+fragment.activity)
+            FragmentEvent(System.currentTimeMillis(),clazz+"_"+index,joinPoint.signature.name+" "+status+fragment.activity)
         )
     }
 
     @Before("execution(* androidx.fragment.app.Fragment.setUserVisibleHint(..))")
     fun onFragmentShow(joinPoint: JoinPoint){
         val key = joinPoint.signature.toString()
-        if(!key.contains(JJBugReport.getInstance().sPacketName)){
+        val clazz = joinPoint.getThis()::class.java.name
+        if(!(clazz.startsWith(JJBugReport.getInstance().sSonPacketName)&&key.contains("androidx.fragment.app.Fragment"))){
             return
         }
         val fragment = joinPoint.getThis() as Fragment
@@ -85,7 +89,7 @@ class AspectHelper {
             return
         if(joinPoint.args.isNotEmpty() && joinPoint.args[0] is Boolean){
             JJBugReport.getInstance().addFragmentRecord(
-                FragmentEvent(System.currentTimeMillis(),joinPoint.getThis().javaClass.simpleName+"_"+index,joinPoint.signature.name+" "+joinPoint.args[0]+"_"+fragment.activity)
+                FragmentEvent(System.currentTimeMillis(),clazz+"_"+index,joinPoint.signature.name+"_"+joinPoint.args[0]+" "+fragment.activity)
             )
         }
     }
