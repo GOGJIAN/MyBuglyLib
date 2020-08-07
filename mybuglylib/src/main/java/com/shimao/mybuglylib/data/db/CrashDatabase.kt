@@ -24,6 +24,7 @@ abstract class CrashDatabase:RoomDatabase() {
                 "crashdatabase"
             )
                 .allowMainThreadQueries()
+                .fallbackToDestructiveMigration()
                 .build()
         }
 
