@@ -2,6 +2,7 @@ package com.shimao.mybuglylib.core
 
 import android.content.res.Resources
 import android.util.Log
+import android.util.LruCache
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.shimao.mybuglylib.data.model.ActivityEvent

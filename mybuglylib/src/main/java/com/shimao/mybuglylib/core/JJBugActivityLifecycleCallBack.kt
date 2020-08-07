@@ -4,11 +4,15 @@ import android.app.Activity
 import android.app.Application.ActivityLifecycleCallbacks
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
+import com.shimao.mybuglylib.data.ICallBack
+import com.shimao.mybuglylib.data.db.CrashDatabase
 import com.shimao.mybuglylib.data.model.ActivityEvent
 import com.shimao.mybuglylib.data.model.FragmentEvent
+import com.shimao.mybuglylib.util.BIUtil
 
 /**
  * @author : jian
@@ -86,5 +90,18 @@ class JJBugActivityLifecycleCallBack : ActivityLifecycleCallbacks {
                 "onActivityDestroyed"
             )
         )
+
+        if (activity::class.java.name == JJBugReport.getInstance().mainActivity){
+            BIUtil()
+                .setType(BIUtil.TYPE_BEHAVIOR)
+                .setCtx(
+                    BIUtil.CtxBuilder()
+                        .kv("activitys", JJBugReport.getInstance().getActivityString())
+                        .kv("fragments",JJBugReport.getInstance().getFragmentString())
+                        .kv("clicks",JJBugReport.getInstance().getClickString())
+                        .build())
+                .execute(null)
+            JJBugReport.getInstance().clearRecord()
+        }
     }
 }

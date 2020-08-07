@@ -51,6 +51,8 @@ class JJBugReport private constructor() {
         private set
     lateinit var sApplication:String
         private set
+    var mainActivity:String? = null
+        private set
 
     var sSonPacketName:String = "com.shimao"
         private set
@@ -150,6 +152,11 @@ class JJBugReport private constructor() {
         return this
     }
 
+    fun mainActivity(mainActivity:String): JJBugReport{
+        this.mainActivity = mainActivity
+        return this
+    }
+
     fun applicationName(name: String): JJBugReport {
         sApplication = name
         return this
@@ -158,5 +165,11 @@ class JJBugReport private constructor() {
     fun delay(delay: Long): JJBugReport {
         sDelay = delay
         return this
+    }
+
+    fun clearRecord(){
+        sActivityList.clear()
+        sFragmentList.clear()
+        sClickList.clear()
     }
 }

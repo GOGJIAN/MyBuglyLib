@@ -17,6 +17,7 @@ class MyApplication: Application() {
             .applicationName("demo")
             .packetName("com.shimao.mybugly")
             .delay(250)
+            .mainActivity(MainActivity2::class.java.name)
             .init(this)
     }
 }

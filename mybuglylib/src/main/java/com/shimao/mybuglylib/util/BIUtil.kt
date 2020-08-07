@@ -26,6 +26,7 @@ class BIUtil {
         const val ACTION_START_APP_NEW = "start_app"
         const val TYPE_PERFORMANCE = "performance"
         const val TYPE_CRASH = "crash"
+        const val TYPE_BEHAVIOR = "behavior"
         const val TYPE_CRASH_CAUGHT = "crash_caught"
 
         /**
