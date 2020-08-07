@@ -65,7 +65,7 @@ class AspectHelper {
         }
 
         val status = if(joinPoint.signature.name == "onHiddenChanged"&&joinPoint.args.isNotEmpty() && joinPoint.args[0] is Boolean){
-            "_"+joinPoint.args[0] as String
+            "_"+joinPoint.args[0].toString()
         }else ""
 
         val fragment = joinPoint.getThis() as Fragment
