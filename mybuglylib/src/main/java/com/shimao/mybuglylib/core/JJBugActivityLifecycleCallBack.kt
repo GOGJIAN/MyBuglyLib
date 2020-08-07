@@ -99,6 +99,7 @@ class JJBugActivityLifecycleCallBack : ActivityLifecycleCallbacks {
                         .kv("activitys", JJBugReport.getInstance().getActivityString())
                         .kv("fragments",JJBugReport.getInstance().getFragmentString())
                         .kv("clicks",JJBugReport.getInstance().getClickString())
+                        .kv("urls",JJBugReport.getInstance().getUrlString())
                         .build())
                 .execute(null)
             JJBugReport.getInstance().clearRecord()

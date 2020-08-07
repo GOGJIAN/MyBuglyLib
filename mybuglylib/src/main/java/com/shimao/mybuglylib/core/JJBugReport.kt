@@ -41,6 +41,8 @@ class JJBugReport private constructor() {
     private var sFragmentList = mutableListOf<FragmentEvent>()
     private var sClickList = mutableListOf<ClickEvent>()
     private var sUserMap = mutableMapOf<String,String>()
+    private var sUrlList = mutableListOf<String>()
+    private var sUrlLimit = 30
     var sBaseUrl:String = ""
         private set
     var sUA:String? = null
@@ -86,6 +88,10 @@ class JJBugReport private constructor() {
 
     fun getClickString():String{
         return Gson().toJson(sClickList)
+    }
+
+    fun getUrlString():String{
+        return Gson().toJson(sUrlList)
     }
 
     fun init(context: Context?){
@@ -167,9 +173,21 @@ class JJBugReport private constructor() {
         return this
     }
 
+    fun urlLimit(limit:Int): JJBugReport{
+        this.sUrlLimit = limit
+        return this
+    }
+
     fun clearRecord(){
         sActivityList.clear()
         sFragmentList.clear()
         sClickList.clear()
+    }
+
+    fun addUrlRecord(url:String){
+        if(sUrlList.size >= sUrlLimit){
+            sUrlList.removeAt(0)
+        }
+        sUrlList.add(url)
     }
 }
