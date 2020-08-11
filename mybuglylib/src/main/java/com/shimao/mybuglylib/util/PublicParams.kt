@@ -46,7 +46,7 @@ object PublicParams {
         map["channel_id"] = "3"
         map["source"] = "mob"
         map["imei"] = imei?:""
-        map["app"] = JJBugReport.getInstance().sApplication
+        map["app"] = JJBugReport.getInstance().sApplication!!
         map["ratio"] = "$width*$height"
         map["device_model"] = device_model
         map["device_merchant"] = device_merchant

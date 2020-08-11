@@ -51,7 +51,7 @@ class JJBugReport private constructor() {
         private set
     var sContext:Context? = null
         private set
-    lateinit var sApplication:String
+    var sApplication:String? = null
         private set
     var mainActivity:String? = null
         private set
@@ -102,7 +102,11 @@ class JJBugReport private constructor() {
         if(sBaseUrl.isEmpty()) throw IllegalArgumentException("base url can not be empty!")
         sContext = if (context !is Application) context.applicationContext else context
 
-        sApplication = sContext!!.packageManager.getApplicationLabel((sContext as Application).applicationInfo).toString()
+        if(sApplication==null) {
+            sApplication =
+                sContext!!.packageManager.getApplicationLabel((sContext as Application).applicationInfo)
+                    .toString()
+        }
         sIsDebug = sContext!!.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
         PublicParams.retrievePublicInfo(sContext!!)
         registerActivityLifecycleCallback()
