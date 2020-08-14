@@ -12,6 +12,7 @@ import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.annotation.After
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Before
+import java.lang.Exception
 
 
 /**
@@ -69,7 +70,11 @@ class AspectHelper {
         }else ""
 
         val fragment = joinPoint.getThis() as Fragment
-        val index = fragment.parentFragmentManager.fragments.indexOf(fragment)
+        val index = try {
+            fragment.parentFragmentManager.fragments.indexOf(fragment)
+        }catch (e:Exception){
+            -1
+        }
         if(index==-1)
             return
         JJBugReport.getInstance().addFragmentRecord(
@@ -85,7 +90,11 @@ class AspectHelper {
             return
         }
         val fragment = joinPoint.getThis() as Fragment
-        val index = fragment.parentFragmentManager.fragments.indexOf(fragment)
+        val index = try {
+            fragment.parentFragmentManager.fragments.indexOf(fragment)
+        }catch (e:Exception){
+            -1
+        }
         if(index==-1)
             return
         if(joinPoint.args.isNotEmpty() && joinPoint.args[0] is Boolean){
