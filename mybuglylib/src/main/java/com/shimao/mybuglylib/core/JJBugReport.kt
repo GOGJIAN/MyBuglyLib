@@ -15,6 +15,7 @@ import com.shimao.mybuglylib.util.BIUtil
 import com.shimao.mybuglylib.util.PublicParams
 import com.shimao.mybuglylib.util.Util
 import java.lang.IllegalArgumentException
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @author : jian
@@ -37,11 +38,11 @@ class JJBugReport private constructor() {
         }
 
     }
-    private var sActivityList = java.util.Collections.synchronizedList(mutableListOf<ActivityEvent>())
-    private var sFragmentList = java.util.Collections.synchronizedList(mutableListOf<FragmentEvent>())
-    private var sClickList = java.util.Collections.synchronizedList(mutableListOf<ClickEvent>())
+    private var sActivityList = CopyOnWriteArrayList<ActivityEvent>()
+    private var sFragmentList = CopyOnWriteArrayList<FragmentEvent>()
+    private var sClickList = CopyOnWriteArrayList<ClickEvent>()
     private var sUserMap = mutableMapOf<String,String>()
-    private var sUrlList = java.util.Collections.synchronizedList(mutableListOf<String>())
+    private var sUrlList = CopyOnWriteArrayList<String>()
     private var sUrlLimit = 30
     var sBaseUrl:String = ""
         private set
