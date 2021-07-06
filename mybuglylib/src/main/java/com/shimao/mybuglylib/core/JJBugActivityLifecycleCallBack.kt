@@ -4,11 +4,15 @@ import android.app.Activity
 import android.app.Application.ActivityLifecycleCallbacks
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
+import com.shimao.mybuglylib.data.ICallBack
+import com.shimao.mybuglylib.data.db.CrashDatabase
 import com.shimao.mybuglylib.data.model.ActivityEvent
 import com.shimao.mybuglylib.data.model.FragmentEvent
+import com.shimao.mybuglylib.util.BIUtil
 
 /**
  * @author : jian
@@ -18,14 +22,6 @@ import com.shimao.mybuglylib.data.model.FragmentEvent
 class JJBugActivityLifecycleCallBack : ActivityLifecycleCallbacks {
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        activity.window.decorView.viewTreeObserver.addOnGlobalLayoutListener {
-            ClickIntercept.hookViews(
-                activity.window.decorView,
-                0
-            )
-        }
-
-
         JJBugReport.getInstance().addActivityRecord(
             ActivityEvent(
                 System.currentTimeMillis(),
@@ -94,5 +90,19 @@ class JJBugActivityLifecycleCallBack : ActivityLifecycleCallbacks {
                 "onActivityDestroyed"
             )
         )
+
+        if (activity::class.java.name == JJBugReport.getInstance().mainActivity){
+            BIUtil()
+                .setType(BIUtil.TYPE_BEHAVIOR)
+                .setCtx(
+                    BIUtil.CtxBuilder()
+                        .kv("activitys", JJBugReport.getInstance().getActivitys())
+                        .kv("fragments",JJBugReport.getInstance().getFragments())
+                        .kv("clicks",JJBugReport.getInstance().getClicks())
+                        .kv("urls",JJBugReport.getInstance().getUrls())
+                        .build())
+                .execute(null)
+            JJBugReport.getInstance().clearRecord()
+        }
     }
 }

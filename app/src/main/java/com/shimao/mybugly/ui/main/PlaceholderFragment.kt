@@ -42,39 +42,6 @@ class PlaceholderFragment : Fragment() {
         return root
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (!hidden) {
-            JJBugReport.getInstance().addFragmentRecord(
-                FragmentEvent(
-                    System.currentTimeMillis(), this::class.java.name+"_"+parentFragmentManager.fragments.indexOf(this), "show"
-                )
-            )
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if(isVisible) {
-            JJBugReport.getInstance().addFragmentRecord(
-                FragmentEvent(
-                    System.currentTimeMillis(), this::class.java.name+"_"+parentFragmentManager.fragments.indexOf(this), "show"
-                )
-            )
-        }
-    }
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (isVisibleToUser) {
-            JJBugReport.getInstance().addFragmentRecord(
-                FragmentEvent(
-                    System.currentTimeMillis(), this::class.java.name+"_"+parentFragmentManager.fragments.indexOf(this), "show"
-                )
-            )
-        }
-    }
-
     companion object {
         /**
          * The fragment argument representing the section number for this

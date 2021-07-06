@@ -1,5 +1,6 @@
 package com.shimao.mybuglylib.util
 
+import com.google.gson.Gson
 import com.shimao.mybuglylib.core.JJBugReport
 import com.shimao.mybuglylib.data.APIWrapper
 import com.shimao.mybuglylib.data.ICallBack
@@ -26,6 +27,7 @@ class BIUtil {
         const val ACTION_START_APP_NEW = "start_app"
         const val TYPE_PERFORMANCE = "performance"
         const val TYPE_CRASH = "crash"
+        const val TYPE_BEHAVIOR = "behavior"
         const val TYPE_CRASH_CAUGHT = "crash_caught"
 
         /**
@@ -35,19 +37,28 @@ class BIUtil {
          * @throws IOException
          */
         fun exception(t:Throwable):String {
+            return Gson().toJson(exceptionList(t))
+//            val list = mutableListOf<String>()
+//            for (stack in t.stackTrace){
+//                list.add("$stack")
+//            }
+//            return list.toString()
+        }
+
+        fun exceptionList(t:Throwable):List<String> {
             val list = mutableListOf<String>()
             for (stack in t.stackTrace){
-                list.add("\"$stack\"")
+                list.add("$stack")
             }
-            return list.toString()
+            return list
         }
     }
 
 
     class CtxBuilder{
-        private val params:MutableMap<String,String?> by lazy { LinkedHashMap<String,String?>()}
+        private val params:MutableMap<String,Any?> by lazy { LinkedHashMap<String,Any?>()}
 
-        fun kv(key:String,value:String?):CtxBuilder{
+        fun kv(key:String,value:Any?):CtxBuilder{
             if (key.isNotEmpty()){
                 params[key] = value
             }
@@ -55,18 +66,19 @@ class BIUtil {
         }
 
         fun build():String{
-            val builder = StringBuilder()
-            builder.append("{")
-            if(params.isNotEmpty()){
-                for(entry in params.entries) {
-                    builder.append("\"").append(entry.key).append("\"")
-                    builder.append(":").append("\"").append(entry.value).append("\"")
-                    builder.append(",")
-                }
-                builder.deleteCharAt(builder.lastIndex)
-            }
-            builder.append("}")
-            return builder.toString()
+            return Gson().toJson(params)
+//            val builder = StringBuilder()
+//            builder.append("{")
+//            if(params.isNotEmpty()){
+//                for(entry in params.entries) {
+//                    builder.append("\"").append(entry.key).append("\"")
+//                    builder.append(":").append("\"").append(entry.value).append("\"")
+//                    builder.append(",")
+//                }
+//                builder.deleteCharAt(builder.lastIndex)
+//            }
+//            builder.append("}")
+//            return builder.toString()
         }
 
 

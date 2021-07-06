@@ -20,6 +20,7 @@ class CrashVO (
     val activitys:String,
     val fragments:String,
     val clicks:String,
+    val urls:String,
     val ctime:Long,
     val status:Int//0未上报，1已上报
 )

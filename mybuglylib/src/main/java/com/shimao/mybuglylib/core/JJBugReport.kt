@@ -15,6 +15,7 @@ import com.shimao.mybuglylib.util.BIUtil
 import com.shimao.mybuglylib.util.PublicParams
 import com.shimao.mybuglylib.util.Util
 import java.lang.IllegalArgumentException
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * @author : jian
@@ -37,10 +38,12 @@ class JJBugReport private constructor() {
         }
 
     }
-    private var sActivityList = mutableListOf<ActivityEvent>()
-    private var sFragmentList = mutableListOf<FragmentEvent>()
-    private var sClickList = mutableListOf<ClickEvent>()
+    private var sActivityList = CopyOnWriteArrayList<ActivityEvent>()
+    private var sFragmentList = CopyOnWriteArrayList<FragmentEvent>()
+    private var sClickList = CopyOnWriteArrayList<ClickEvent>()
     private var sUserMap = mutableMapOf<String,String>()
+    private var sUrlList = CopyOnWriteArrayList<String>()
+    private var sUrlLimit = 30
     var sBaseUrl:String = ""
         private set
     var sUA:String? = null
@@ -49,7 +52,12 @@ class JJBugReport private constructor() {
         private set
     var sContext:Context? = null
         private set
-    lateinit var sApplication:String
+    var sApplication:String? = null
+        private set
+    var mainActivity:String? = null
+        private set
+
+    var sSonPacketName:String = "com.shimao"
         private set
 
     private var sCallback: JJBugCallBack? = null
@@ -71,16 +79,36 @@ class JJBugReport private constructor() {
         sClickList.add(clickEvent)
     }
 
+    fun getActivitys():Array<ActivityEvent>{
+        return sActivityList.toTypedArray()
+    }
+
+    fun getFragments(): Array<FragmentEvent> {
+        return sFragmentList.toTypedArray()
+    }
+
+    fun getClicks(): Array<ClickEvent> {
+        return sClickList.toTypedArray()
+    }
+
+    fun getUrls(): Array<String> {
+        return sUrlList.toTypedArray()
+    }
+
     fun getActivityString():String{
-        return Gson().toJson(sActivityList)
+        return Gson().toJson(sActivityList.toArray())
     }
 
     fun getFragmentString():String{
-        return Gson().toJson(sFragmentList)
+        return Gson().toJson(sFragmentList.toArray())
     }
 
     fun getClickString():String{
-        return Gson().toJson(sClickList)
+        return Gson().toJson(sClickList.toArray())
+    }
+
+    fun getUrlString():String{
+        return Gson().toJson(sUrlList.toArray())
     }
 
     fun init(context: Context?){
@@ -91,14 +119,16 @@ class JJBugReport private constructor() {
         if(sBaseUrl.isEmpty()) throw IllegalArgumentException("base url can not be empty!")
         sContext = if (context !is Application) context.applicationContext else context
 
-        sApplication = sContext!!.packageManager.getApplicationLabel((sContext as Application).applicationInfo).toString()
+        if(sApplication==null) {
+            sApplication =
+                sContext!!.packageManager.getApplicationLabel((sContext as Application).applicationInfo)
+                    .toString()
+        }
         sIsDebug = sContext!!.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
         PublicParams.retrievePublicInfo(sContext!!)
-
-        JJBugHandler.newInstance(Thread.getDefaultUncaughtExceptionHandler()).setCallback(sCallback).register()
         registerActivityLifecycleCallback()
+        JJBugHandler.newInstance(Thread.getDefaultUncaughtExceptionHandler()).setCallback(sCallback).register()
         CrashDatabase.init(context)
-        ClickIntercept.init()
         HttpClient.getHttpClient((sContext as Application).applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0)
         Thread(Runnable {
             CrashDatabase.get().crashDao().deleteAlreadyPost()
@@ -110,10 +140,12 @@ class JJBugReport private constructor() {
                         BIUtil.CtxBuilder()
                         .kv("message",crash.message)
                         .kv("exception",crash.exception)
-                        .kv("stack",crash.stack)
-                        .kv("activitys", crash.activitys)
-                        .kv("fragments",crash.fragments)
-                        .kv("clicks",crash.clicks)
+                        .kv("stack",Gson().fromJson(crash.stack,List::class.java))
+                        .kv("activitys", Gson().fromJson(crash.activitys,List::class.java))
+                        .kv("urls",Gson().fromJson(crash.urls,List::class.java))
+                        .kv("fragments",Gson().fromJson(crash.fragments,List::class.java))
+                        .kv("clicks",Gson().fromJson(crash.clicks,List::class.java))
+                        .kv("crash_time",crash.ctime)
                         .build())
                     .execute(object : ICallBack.CallBackImpl<Any>(){
                         override fun onNext(data: Any?) {
@@ -139,8 +171,18 @@ class JJBugReport private constructor() {
         return this
     }
 
+    fun packetName(son:String): JJBugReport{
+        sSonPacketName = son
+        return this
+    }
+
     fun baseUrl(baseUrl:String): JJBugReport{
         sBaseUrl = baseUrl
+        return this
+    }
+
+    fun mainActivity(mainActivity:String): JJBugReport{
+        this.mainActivity = mainActivity
         return this
     }
 
@@ -152,5 +194,23 @@ class JJBugReport private constructor() {
     fun delay(delay: Long): JJBugReport {
         sDelay = delay
         return this
+    }
+
+    fun urlLimit(limit:Int): JJBugReport{
+        this.sUrlLimit = limit
+        return this
+    }
+
+    fun clearRecord(){
+        sActivityList.clear()
+        sFragmentList.clear()
+        sClickList.clear()
+    }
+
+    fun addUrlRecord(url:String){
+        if(sUrlList.size >= sUrlLimit){
+            sUrlList.removeAt(0)
+        }
+        sUrlList.add(url)
     }
 }

@@ -27,28 +27,33 @@ class JJBugHandler private constructor(defHandler: Thread.UncaughtExceptionHandl
         val activitys = JJBugReport.getInstance().getActivityString()
         val fragments = JJBugReport.getInstance().getFragmentString()
         val clicks = JJBugReport.getInstance().getClickString()
+        val urls = JJBugReport.getInstance().getUrlString()
         val id = UUID.randomUUID().toString()
+        val time = System.currentTimeMillis()
         CrashDatabase.get().crashDao().insert(
             CrashVO(
-                id,
-                error.message ?: "unknown",
-                error::class.java.name,
-                stack,
-                activitys,
-                fragments,
-                clicks,
-                System.currentTimeMillis(),
-                0
+                id = id,
+                message = error.message ?: "unknown",
+                exception = error::class.java.name,
+                stack = stack,
+                activitys = activitys,
+                fragments = fragments,
+                clicks = clicks,
+                urls = urls,
+                ctime = time,
+                status = 0
             ))
         BIUtil()
             .setType(BIUtil.TYPE_CRASH)
             .setCtx(BIUtil.CtxBuilder()
                 .kv("message",error.message)
                 .kv("exception",error::class.java.name)
-                .kv("stack",stack)
-                .kv("activitys", activitys)
-                .kv("fragments",fragments)
-                .kv("clicks",clicks)
+                .kv("stack",BIUtil.exceptionList(error))
+                .kv("activitys", JJBugReport.getInstance().getActivitys())
+                .kv("fragments",JJBugReport.getInstance().getFragments())
+                .kv("clicks",JJBugReport.getInstance().getClicks())
+                .kv("urls",JJBugReport.getInstance().getUrls())
+                .kv("crash_time",time)
                 .build())
             .execute(object :ICallBack.CallBackImpl<Any>(){
                 override fun onNext(data: Any?) {
